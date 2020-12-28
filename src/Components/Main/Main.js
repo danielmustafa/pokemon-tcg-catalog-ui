@@ -7,6 +7,8 @@ export const Main = (props) => {
     const [cardState, setCardState] = useState([])
     const [alertState, setAlertState] = useState("")
 
+    console.log('main - render')
+
     const showNoResultsFound = () => {
         setAlertState("No results found")
     }
@@ -23,7 +25,6 @@ export const Main = (props) => {
     const onSearching = () => {
         setAlertState("Searching...")
     }
-
 
     return (
         <div>

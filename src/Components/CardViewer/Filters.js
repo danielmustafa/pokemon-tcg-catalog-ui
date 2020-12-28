@@ -1,24 +1,31 @@
 import React from 'react';
+import styles from './Filters.module.css'
 
-const Filters = ({filters, onFilterSelected}) => {
+const Filters = ({ filters, onFilterSelected }) => {
 
     const generateFilterCheckboxes = () => {
-        let typeFilterArr = []
+        let filterArr = []
+        console.log('filters - render')
+        console.log(filters)
         for (var filter of Object.keys(filters)) {
-            typeFilterArr.push(<React.Fragment>
-                <input key={filter} type="checkbox" name={filter} checked={filters[filter]} onChange={ onFilterSelected }></input>
-                <label key={`lbl-${filter}`}>{filter}</label>
-            </React.Fragment>)  
+            filterArr.push(
+                <div>
+                    <label className={styles.filterType}>{filter}: </label>
+                    {filters[filter].map(filterValue => {
+                        return <label className={styles.filterValue}><input filtertype={filter} key={filterValue.key} type="checkbox" name={filterValue.key} checked={filterValue.selected} onChange={ onFilterSelected }></input>{filterValue.key}</label>
+                    })}
+                </div>
+            )
         }
-        return typeFilterArr
+        return filterArr
     }
 
     return (
         <div>
             <div><h4>Filter by:</h4></div>
             <div>
-                <label>Type: </label>
-                {  generateFilterCheckboxes() }
+
+                {generateFilterCheckboxes()}
             </div>
         </div>
     );

@@ -1,0 +1,8 @@
+.filterType {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.filterValue {
+    padding: 3px;
+}

@@ -13,6 +13,11 @@ const Search = (props) => {
            name
            hp
            number
+           subtype
+           supertype
+           rarity
+           set
+           setCode
            imageUrlHiRes
            ability {
                name
@@ -58,11 +63,11 @@ const Search = (props) => {
         <div>
             <form onSubmit={handleSearchClicked}>
                 <div>
-                    <label>Pokemans: </label>
+                    <label>Card Name: </label>
                     <input type="text" placeholder="pikachu" name="name" onChange={ handleChanged } />
                 </div>
                 <div>
-                    <label>Limit results: </label>
+                    <label>Limit Results: </label>
                     <select name="pageSize" onChange={ handleChanged }  >
                         <option defaultValue value="10">10</option>
                         <option value="50">50</option>
