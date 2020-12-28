@@ -22,8 +22,6 @@ const CardViewer = ({ cards }) => {
         setCardResultsCount(cardState.length)
     }, [cardState])
 
-
-
     useEffect(() => {
         updateCardsToDisplay()
     }, [filters])
@@ -104,12 +102,6 @@ const CardViewer = ({ cards }) => {
         let displayableCards = []
         Object.assign(displayableCards, cardState)
 
-        /* filterType: [
-            {
-                key: String,
-                selected: boolean
-            }
-        ] */
         const filterCards = (cards, filterType, filterValues) => {
             let selectedFilterValues = filterValues.filter(values => {
                 return values.selected === true
@@ -139,21 +131,6 @@ const CardViewer = ({ cards }) => {
         for (const [key, value] of Object.entries(filters)) {
             displayableCards = filterCards(displayableCards, key, value)
         }
-
-        /*         const filterCards = (cards, filters) => {
-                    cards = cards.filter(card => {
-                        return !_.isNull(card.types)
-                    })
-                        .filter(card => {
-                            return card.types.some(type => filters.includes(type))
-                        })
-                    return cards
-                }
-        
-                let typeFilters = getCheckedTypeFilters()
-                if (!_.isEmpty(typeFilters)) {
-                    displayableCards = filterCards(displayableCards, typeFilters)
-                } */
 
         let cardsDisplayOnly = displayableCards.map(card => {
             return {
