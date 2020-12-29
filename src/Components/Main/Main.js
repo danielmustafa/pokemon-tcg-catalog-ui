@@ -2,23 +2,25 @@ import { React, useState } from 'react'
 import _ from 'lodash'
 import Search from '../Search/Search'
 import CardViewer from '../CardViewer/CardViewer'
-
 export const Main = (props) => {
     const [cardState, setCardState] = useState([])
     const [alertState, setAlertState] = useState("")
 
     console.log('main - render')
 
-    const showNoResultsFound = () => {
-        setAlertState("No results found")
-    }
-
-    const handleSearchResults = (results) => {
-        if (_.isEmpty(results)) {
-            showNoResultsFound()
+    const handleSearchResults = (results, alertMessage) => {
+        if (_.isNull(results)) {
+            //clear the card state
+            setCardState([])
+            return
+        } 
+        
+        if (_.isEmpty(results) && _.isNull(alertMessage)) {
+            setAlertState("No results found")
         } else {
-            setAlertState(null)    
+            setAlertState(alertMessage)
         }
+
         setCardState(results)
     }
 
@@ -32,7 +34,7 @@ export const Main = (props) => {
             <br />
             {alertState}
             <div>
-            {!_.isEmpty(cardState) && <CardViewer cards={cardState} />}
+                {!_.isEmpty(cardState) && <CardViewer cards={cardState} />}
             </div>
 
         </div>

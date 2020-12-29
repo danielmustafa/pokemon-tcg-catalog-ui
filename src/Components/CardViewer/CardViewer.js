@@ -2,8 +2,17 @@ import React, { useEffect, useState } from 'react';
 import Card from '../Card/Card';
 import Filters from './Filters';
 import _, { forIn } from 'lodash'
+import Grid from '@material-ui/core/Grid'
+import Box from '@material-ui/core/Box'
+import {makeStyles} from '@material-ui/core'
+
+const useStyles = (themes) => makeStyles({
+
+})
+
 
 const CardViewer = ({ cards }) => {
+    const classes = useStyles()
     const CARD_FILTERS = ["types", "subtype", "supertype", "rarity", "set"/* , "ability" */]
     const [cardState, setCardState] = useState([])
     const [cardsToDisplay, setCardsToDisplay] = useState([])
@@ -35,6 +44,7 @@ const CardViewer = ({ cards }) => {
     }
 
     const onFilterSelected = (event) => {
+        console.log(event)
         let updatedFilters = {}
         Object.assign(updatedFilters, filters)
 
@@ -55,13 +65,15 @@ const CardViewer = ({ cards }) => {
     const updateFilters = () => {
         let filters = {}
         cardState.forEach(card => {
+            //buildFiltersByType
             for (var key of Object.keys(card)) {
                 if (_.includes(CARD_FILTERS, key)) {
                     if (!(key in filters)) {
                         filters[key] = []
                     }
 
-                    if (card[key] != null) {
+                      //check if card attribute value is null or empty
+                      if (!_.isNull(card[key]) && !_.isEmpty(card[key])) {
 
                         if (Array.isArray(card[key])) {
                             card[key].forEach(val => {
@@ -76,17 +88,22 @@ const CardViewer = ({ cards }) => {
             }
         })
 
-        for (var filter of Object.keys(filters)) {
-            var values = filters[filter]
-            filters[filter] = _.uniq(values)
+        //For each filter value, add 'selected' bool
+        for (var filterType of Object.keys(filters)) {
+            var values = filters[filterType]
+            filters[filterType] = _.uniq(values)
 
-            let filtersObjs = filters[filter].map(filterValue => {
-                return {
-                    key: filterValue,
-                    selected: false
-                }
-            })
-            filters[filter] = filtersObjs
+            if (filters[filterType].length <= 1) {
+                delete filters[filterType]
+            } else {
+                let filtersObjs = filters[filterType].map(filterValue => {
+                    return {
+                        key: filterValue,
+                        selected: false
+                    }
+                })
+                filters[filterType] = filtersObjs
+            }
         }
 
         setFilters(filters)
@@ -123,8 +140,6 @@ const CardViewer = ({ cards }) => {
 
             }
 
-
-
             return cards
         }
 
@@ -144,11 +159,23 @@ const CardViewer = ({ cards }) => {
     }
 
     return (
-        <div>
-            {cardResultsNotEmpty() && <Filters filters={filters} onFilterSelected={onFilterSelected} />}
-            {cardResultsNotEmpty() && <h4>Showing: {filteredCardCount}/{cardResultsCount}</h4>}
-            {cardResultsNotEmpty() && displayCards()}
-        </div>
+
+        <Box margin="10px">
+            <Grid container spacing={2}>
+
+                <Grid item xs={1}>
+                    {cardResultsNotEmpty() &&  <Filters filters={filters} onFilterSelected={onFilterSelected} />}
+                </Grid>
+                {/*                 <Grid item>
+                    {cardResultsNotEmpty() && <h4>Showing: {filteredCardCount}/{cardResultsCount}</h4>}
+                </Grid> */}
+                <Grid item xs sm md >
+                    {cardResultsNotEmpty() && displayCards()}
+                </Grid>
+
+            </Grid>
+        </Box>
+
     );
 };
 

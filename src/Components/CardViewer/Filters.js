@@ -1,33 +1,50 @@
+import { Checkbox, FormControlLabel, Grid, Typography, makeStyles } from '@material-ui/core';
+import Box from '@material-ui/core/Box'
+import { upperCase } from 'lodash';
 import React from 'react';
-import styles from './Filters.module.css'
+
+const useStyles = makeStyles((theme) => ({
+    filterTitle: {
+        textTransform: "capitalize",
+        fontWeight: "bold",
+        textAlign: "center"
+    }
+}));
 
 const Filters = ({ filters, onFilterSelected }) => {
-
+    const classes = useStyles()
     const generateFilterCheckboxes = () => {
         let filterArr = []
         console.log('filters - render')
         console.log(filters)
         for (var filter of Object.keys(filters)) {
             filterArr.push(
-                <div>
-                    <label className={styles.filterType}>{filter}: </label>
-                    {filters[filter].map(filterValue => {
-                        return <label className={styles.filterValue}><input filtertype={filter} key={filterValue.key} type="checkbox" name={filterValue.key} checked={filterValue.selected} onChange={ onFilterSelected }></input>{filterValue.key}</label>
-                    })}
-                </div>
+                <Grid item xs={12}>
+                    <Box border={1} borderColor="grey.500" borderRadius={16} >
+                        <Typography className={classes.filterTitle} >{filter}</Typography>
+
+                        {filters[filter].map(filterValue => {
+                            return (
+                                
+                                <Box paddingLeft="10px">
+                                    <FormControlLabel label={filterValue.key}
+                                        control={<Checkbox key={filterValue.key} name={filterValue.key} checked={filterValue.selected} onChange={onFilterSelected} inputProps={{ filtertype: filter }} />} />
+                                </Box>)
+                                
+                        })}
+                    </Box>
+                </Grid>
+
             )
         }
         return filterArr
     }
 
     return (
-        <div>
-            <div><h4>Filter by:</h4></div>
-            <div>
-
-                {generateFilterCheckboxes()}
-            </div>
-        </div>
+        <Grid container justify="center">
+            <Typography className={classes.filterTitle} >Filter by: </Typography>
+            {generateFilterCheckboxes()}
+        </Grid>
     );
 };
 
