@@ -1,10 +1,12 @@
-import { React, useState } from 'react'
+import { React, useRef, useState } from 'react'
 import _ from 'lodash'
 import Search from '../Search/Search'
 import CardViewer from '../CardViewer/CardViewer'
+import { Button } from '@material-ui/core'
 export const Main = (props) => {
     const [cardState, setCardState] = useState([])
     const [alertState, setAlertState] = useState("")
+    
 
     console.log('main - render')
 
@@ -13,8 +15,8 @@ export const Main = (props) => {
             //clear the card state
             setCardState([])
             return
-        } 
-        
+        }
+
         if (_.isEmpty(results) && _.isNull(alertMessage)) {
             setAlertState("No results found")
         } else {
@@ -28,7 +30,7 @@ export const Main = (props) => {
         setAlertState("Searching...")
     }
 
-    return (
+    return (        
         <div>
             <Search handleSearch={handleSearchResults} onSearching={onSearching} />
             <br />
@@ -36,7 +38,6 @@ export const Main = (props) => {
             <div>
                 {!_.isEmpty(cardState) && <CardViewer cards={cardState} />}
             </div>
-
         </div>
     )
 }

@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Card from '../Card/Card';
 import Filters from './Filters';
 import _, { forIn } from 'lodash'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
-import {makeStyles} from '@material-ui/core'
-
-const useStyles = (themes) => makeStyles({
-
+import { Drawer, ButtonBase, makeStyles } from '@material-ui/core'
+import CardDetailsView from '../CardDetailsView/CardDetailsView';
+const useStyles = () => makeStyles({
 })
 
 
@@ -19,6 +18,9 @@ const CardViewer = ({ cards }) => {
     const [filters, setFilters] = useState({})
     const [cardResultsCount, setCardResultsCount] = useState(0)
     const [filteredCardCount, setFilteredCardCount] = useState(0)
+    const [showSelectedCardView, setShowSelectedCardView] = useState(false)
+    let [selectedCard, setSelectedCard] = useState(null)
+    let modalRef = useRef()
 
     useEffect(() => {
         setCardState(cards)
@@ -44,7 +46,6 @@ const CardViewer = ({ cards }) => {
     }
 
     const onFilterSelected = (event) => {
-        console.log(event)
         let updatedFilters = {}
         Object.assign(updatedFilters, filters)
 
@@ -72,8 +73,8 @@ const CardViewer = ({ cards }) => {
                         filters[key] = []
                     }
 
-                      //check if card attribute value is null or empty
-                      if (!_.isNull(card[key]) && !_.isEmpty(card[key])) {
+                    //check if card attribute value is null or empty
+                    if (!_.isNull(card[key]) && !_.isEmpty(card[key])) {
 
                         if (Array.isArray(card[key])) {
                             card[key].forEach(val => {
@@ -109,9 +110,19 @@ const CardViewer = ({ cards }) => {
         setFilters(filters)
     }
 
-    const displayCards = () => {
+    const displayCards = (height, width) => {
         return cardsToDisplay.map(card => {
-            return <Card key={card.id} imageUrl={card.imageUrlHiRes} name={card.name} />
+            return (<Grid item>
+                <ButtonBase className={classes.cardButton} className={classes.cardButton} type="button" >
+                    <Card key={card.id} card={card} height={height} width={width} onSelected={ handleCardSelected } />
+                </ButtonBase>
+            </Grid>
+                // return (<Grid item alignContent="stretch" alignItems="stretch" justify="center">
+                //     <Button className={classes.cardButton} type="button" onClick={ handleCardSelected }>
+                //     <Card key={card.id} id={card.id} imageUrl={card.imageUrlHiRes} name={card.name} height={height} width={width} />
+                //     </Button>
+                // </Grid>)
+            )
         })
     }
 
@@ -147,35 +158,50 @@ const CardViewer = ({ cards }) => {
             displayableCards = filterCards(displayableCards, key, value)
         }
 
-        let cardsDisplayOnly = displayableCards.map(card => {
-            return {
-                id: card.id,
-                name: card.name,
-                imageUrlHiRes: card.imageUrlHiRes
-            }
-        })
+        // let cardsDisplayOnly = displayableCards.map(card => {
+        //     return {
+        //         id: card.id,
+        //         name: card.name,
+        //         imageUrlHiRes: card.imageUrlHiRes
+        //     }
+        // })
 
-        setCardsToDisplay(cardsDisplayOnly)
+        setCardsToDisplay(displayableCards)
     }
 
-    return (
+    const getCardById = (id) => {
+        return cardState.find(card => card.id === id)
+    }
 
-        <Box margin="10px">
+    const handleCardSelected = (card) => {
+        setSelectedCard(card)
+        setShowSelectedCardView(true)
+
+    }
+
+    const handleClose = () => {
+        setShowSelectedCardView(false)
+    }
+
+    return (<React.Fragment>
+        <Box margin="20px">
             <Grid container spacing={2}>
-
-                <Grid item xs={1}>
-                    {cardResultsNotEmpty() &&  <Filters filters={filters} onFilterSelected={onFilterSelected} />}
+                <Grid item xs={1} sm={1}>
+                    {cardResultsNotEmpty() && <Filters filters={filters} onFilterSelected={onFilterSelected} />}
                 </Grid>
-                {/*                 <Grid item>
-                    {cardResultsNotEmpty() && <h4>Showing: {filteredCardCount}/{cardResultsCount}</h4>}
-                </Grid> */}
-                <Grid item xs sm md >
-                    {cardResultsNotEmpty() && displayCards()}
+                <Grid container item spacing={1} xs={12} sm={11} alignContent="flex-start">
+                    {cardResultsNotEmpty() && displayCards("325px", "225px")}
                 </Grid>
 
             </Grid>
         </Box>
-
+        
+        {selectedCard && <Drawer anchor="bottom" open={showSelectedCardView} onClose={ handleClose }>
+            <CardDetailsView card={selectedCard}/>
+        </Drawer>}
+            
+          
+        </React.Fragment>
     );
 };
 
